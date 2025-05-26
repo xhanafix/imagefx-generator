@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background circle -->
+    <circle cx="64" cy="64" r="60" fill="#4285f4"/>
+    
+    <!-- Key shape -->
+    <path d="M64 30 L64 98 M64 30 C40 30 40 50 40 64 C40 78 40 98 64 98" 
+          stroke="white" 
+          stroke-width="8" 
+          fill="none"/>
+    
+    <!-- Key teeth -->
+    <rect x="40" y="45" width="8" height="8" fill="white"/>
+    <rect x="40" y="65" width="8" height="8" fill="white"/>
+    <rect x="40" y="85" width="8" height="8" fill="white"/>
+    
+    <!-- Google G -->
+    <path d="M80 64 C80 72 72 80 64 80 C56 80 48 72 48 64 C48 56 56 48 64 48 C68 48 72 50 74 54" 
+          stroke="white" 
+          stroke-width="8" 
+          fill="none"/>
+</svg> 
