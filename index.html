@@ -80,6 +80,25 @@
       flex: 1;
     }
 
+    .remember-dir {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .remember-dir input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+
+    .remember-dir label {
+      margin: 0;
+      cursor: pointer;
+    }
+
     button {
       background-color: var(--accent);
       color: white;
@@ -149,11 +168,326 @@
     .success {
       color: var(--success);
     }
+
+    .amateur-prompt-section {
+      margin-bottom: 32px;
+      padding: 20px;
+      background-color: var(--bg-primary);
+      border-radius: 8px;
+    }
+
+    .amateur-prompt-section h3 {
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .amateur-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .control-group {
+      margin-bottom: 16px;
+    }
+
+    .control-group label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .control-group select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      background-color: var(--bg-secondary);
+      border: 1px solid #404040;
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+
+    .secondary-button {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--accent);
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .secondary-button:hover {
+      background-color: var(--accent);
+      color: white;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .button-group .secondary-button {
+      flex: 1;
+    }
+
+    .preview-section {
+      margin-top: 32px;
+    }
+
+    .preview-section h3 {
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .image-preview {
+      position: relative;
+      aspect-ratio: 1;
+      background-color: var(--bg-primary);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-preview .download-btn {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .image-preview:hover .download-btn {
+      opacity: 1;
+    }
+
+    .image-preview .download-btn:hover {
+      background-color: rgba(0, 0, 0, 0.9);
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>ImageFX Generator</h2>
+    
+    <div class="amateur-prompt-section">
+      <h3>Amateur Photo Prompt Generator</h3>
+      <div class="amateur-controls">
+        <div class="control-group">
+          <label>Custom Subject (optional):
+            <input type="text" id="customSubject" placeholder="Enter custom subject...">
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label>Subject Type:
+            <select id="subjectType">
+              <option value="">Select subject type...</option>
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+              <option value="street">Street</option>
+              <option value="food">Food</option>
+              <option value="pet">Pet</option>
+              <option value="family">Family</option>
+              <option value="travel">Travel</option>
+              <option value="event">Event</option>
+              <option value="nature">Nature</option>
+              <option value="object">Object</option>
+              <option value="sport">Sport</option>
+              <option value="vehicle">Vehicle</option>
+              <option value="selfie">Selfie</option>
+              <option value="child">Child</option>
+              <option value="beach life">Beach Life</option>
+              <option value="night scene">Night Scene</option>
+              <option value="concert">Concert</option>
+              <option value="party">Party</option>
+              <option value="graduation">Graduation</option>
+              <option value="wedding">Wedding</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label>Location:
+            <select id="location">
+              <option value="">Select location...</option>
+              <option value="home">Home</option>
+              <option value="backyard">Backyard</option>
+              <option value="local park">Local Park</option>
+              <option value="beach">Beach</option>
+              <option value="city streets">City Streets</option>
+              <option value="restaurant">Restaurant</option>
+              <option value="party">Party</option>
+              <option value="tourist spot">Tourist Spot</option>
+              <option value="shopping mall">Shopping Mall</option>
+              <option value="school">School</option>
+              <option value="office">Office</option>
+              <option value="gym">Gym</option>
+              <option value="concert">Concert</option>
+              <option value="forest">Forest</option>
+              <option value="mountain">Mountain</option>
+              <option value="lake">Lake</option>
+              <option value="swimming pool">Swimming Pool</option>
+              <option value="inside car">Inside Car</option>
+              <option value="stadium">Stadium</option>
+              <option value="airport">Airport</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label>Lighting:
+            <select id="lighting">
+              <option value="">Select lighting...</option>
+              <option value="harsh flash">Harsh Flash</option>
+              <option value="indoor lighting">Indoor Lighting</option>
+              <option value="natural light">Natural Light</option>
+              <option value="sunset">Sunset</option>
+              <option value="too dark">Too Dark</option>
+              <option value="overexposed">Overexposed</option>
+              <option value="mixed lighting">Mixed Lighting</option>
+              <option value="fluorescent">Fluorescent</option>
+              <option value="evening">Evening</option>
+              <option value="morning">Morning</option>
+              <option value="window light">Window Light</option>
+              <option value="shaded">Shaded</option>
+              <option value="candlelight">Candlelight</option>
+              <option value="streetlight">Streetlight</option>
+              <option value="neon lights">Neon Lights</option>
+              <option value="backlit">Backlit</option>
+              <option value="tungsten bulbs">Tungsten Bulbs</option>
+              <option value="cloudy day">Cloudy Day</option>
+              <option value="night">Night</option>
+              <option value="screen light">Screen Light</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label>Camera Type:
+            <select id="cameraType">
+              <option value="">Select camera type...</option>
+              <option value="smartphone">Smartphone</option>
+              <option value="point and shoot">Point and Shoot</option>
+              <option value="old digital camera">Old Digital Camera</option>
+              <option value="disposable camera">Disposable Camera</option>
+              <option value="polaroid">Polaroid</option>
+              <option value="webcam">Webcam</option>
+              <option value="tablet">Tablet</option>
+              <option value="flip phone">Flip Phone</option>
+              <option value="action camera">Action Camera</option>
+              <option value="toy camera">Toy Camera</option>
+              <option value="lomography">Lomography</option>
+              <option value="film camera">Film Camera</option>
+              <option value="instant camera">Instant Camera</option>
+              <option value="cctv camera">CCTV Camera</option>
+              <option value="vhs camera">VHS Camera</option>
+              <option value="digital compact">Digital Compact</option>
+              <option value="bridge camera">Bridge Camera</option>
+              <option value="outdated phone">Outdated Phone</option>
+              <option value="security camera">Security Camera</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label>Common Mistakes:
+            <select id="mistakes">
+              <option value="">Select mistake...</option>
+              <option value="none">None</option>
+              <option value="blurry">Blurry</option>
+              <option value="finger in frame">Finger in Frame</option>
+              <option value="tilted horizon">Tilted Horizon</option>
+              <option value="red eye">Red Eye</option>
+              <option value="badly cropped">Badly Cropped</option>
+              <option value="motion blur">Motion Blur</option>
+              <option value="lens flare">Lens Flare</option>
+              <option value="photographer shadow">Photographer Shadow</option>
+              <option value="too close">Too Close</option>
+              <option value="too far away">Too Far Away</option>
+              <option value="closed eyes">Closed Eyes</option>
+              <option value="double exposure">Double Exposure</option>
+              <option value="light leak">Light Leak</option>
+              <option value="dust on lens">Dust on Lens</option>
+              <option value="wrong focus point">Wrong Focus Point</option>
+              <option value="flash reflections">Flash Reflections</option>
+              <option value="head cut off">Head Cut Off</option>
+              <option value="overprocessed">Overprocessed</option>
+              <option value="bad timing">Bad Timing</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label>Time Period:
+            <select id="timePeriod">
+              <option value="">Select time period...</option>
+              <option value="none">None</option>
+              <option value="1970s">1970s</option>
+              <option value="1980s">1980s</option>
+              <option value="1990s">1990s</option>
+              <option value="2000s">2000s</option>
+              <option value="2010s">2010s</option>
+              <option value="present">Present</option>
+              <option value="digital era">Digital Era</option>
+              <option value="film era">Film Era</option>
+              <option value="early digital">Early Digital</option>
+              <option value="social media era">Social Media Era</option>
+              <option value="pre-smartphone">Pre-Smartphone</option>
+              <option value="smartphone era">Smartphone Era</option>
+              <option value="myspace era">Myspace Era</option>
+              <option value="flip phone era">Flip Phone Era</option>
+              <option value="disposable camera era">Disposable Camera Era</option>
+              <option value="polaroid era">Polaroid Era</option>
+              <option value="vhs era">VHS Era</option>
+              <option value="photo album era">Photo Album Era</option>
+              <option value="vintage">Vintage</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label>Amateur Level:
+            <select id="amateurLevel">
+              <option value="subtle">Subtle</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="extreme">Extreme</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="button-group">
+          <button type="button" id="generateAmateurPrompt" class="secondary-button">Generate Prompt</button>
+          <button type="button" id="generateRandomPrompt" class="secondary-button">Random</button>
+        </div>
+      </div>
+    </div>
+
     <form id="genForm">
       <label>Prompt:<input type="text" id="prompt" required placeholder="Enter your prompt here..."></label>
       <label>Count:<input type="number" id="count" min="1" max="8" value="2"></label>
@@ -186,6 +520,10 @@
           <input type="text" id="saveDir" placeholder="Select directory to save images" readonly>
           <button type="button" id="selectDir">Browse</button>
         </div>
+        <div class="remember-dir">
+          <input type="checkbox" id="rememberDir" checked>
+          <label for="rememberDir">Remember last directory</label>
+        </div>
       </label>
       <button type="submit" id="generateBtn">Generate Images</button>
     </form>
@@ -194,6 +532,10 @@
       <div class="status">Generating images...</div>
     </div>
     <div id="output"></div>
+    <div class="preview-section">
+      <h3>Generated Images</h3>
+      <div id="imagePreview" class="image-grid"></div>
+    </div>
   </div>
   <script src="renderer.js"></script>
 </body>
