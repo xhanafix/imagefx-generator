@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ImageFX Generator</title>
+  <style>
+    :root {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #2d2d2d;
+      --text-primary: #ffffff;
+      --text-secondary: #b3b3b3;
+      --accent: #7289da;
+      --accent-hover: #5b6eae;
+      --error: #ed4245;
+      --success: #43b581;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: var(--bg-secondary);
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    label {
+      display: block;
+      margin-top: 16px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      background-color: var(--bg-primary);
+      border: 1px solid #404040;
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .directory-select {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .directory-select input {
+      flex: 1;
+    }
+
+    button {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--accent-hover);
+    }
+
+    button:disabled {
+      background-color: #404040;
+      cursor: not-allowed;
+    }
+
+    #output {
+      margin-top: 24px;
+      padding: 16px;
+      background-color: var(--bg-primary);
+      border-radius: 6px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+      min-height: 100px;
+    }
+
+    .loading {
+      display: none;
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto;
+      border: 4px solid var(--bg-secondary);
+      border-top: 4px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .status {
+      margin-top: 12px;
+      color: var(--text-secondary);
+    }
+
+    .error {
+      color: var(--error);
+    }
+
+    .success {
+      color: var(--success);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>ImageFX Generator</h2>
+    <form id="genForm">
+      <label>Prompt:<input type="text" id="prompt" required placeholder="Enter your prompt here..."></label>
+      <label>Count:<input type="number" id="count" min="1" max="8" value="2"></label>
+      <label>Aspect Ratio:
+        <select id="ratio">
+          <option value="IMAGE_ASPECT_RATIO_SQUARE">Square</option>
+          <option value="IMAGE_ASPECT_RATIO_PORTRAIT">Portrait</option>
+          <option value="IMAGE_ASPECT_RATIO_LANDSCAPE">Landscape</option>
+          <option value="IMAGE_ASPECT_RATIO_LANDSCAPE_FOUR_THREE">Landscape 4:3</option>
+          <option value="IMAGE_ASPECT_RATIO_PORTRAIT_THREE_FOUR">Portrait 3:4</option>
+        </select>
+      </label>
+      <label>Model:
+        <select id="model">
+          <option value="IMAGEN_3">IMAGEN_3</option>
+          <option value="IMAGEN_2">IMAGEN_2</option>
+          <option value="IMAGEN_3_1">IMAGEN_3_1</option>
+          <option value="IMAGEN_3_5">IMAGEN_3_5</option>
+          <option value="IMAGEN_2_LANDSCAPE">IMAGEN_2_LANDSCAPE</option>
+          <option value="IMAGEN_3_PORTRAIT">IMAGEN_3_PORTRAIT</option>
+          <option value="IMAGEN_3_LANDSCAPE">IMAGEN_3_LANDSCAPE</option>
+          <option value="IMAGEN_3_PORTRAIT_THREE_FOUR">IMAGEN_3_PORTRAIT_THREE_FOUR</option>
+          <option value="IMAGEN_3_LANDSCAPE_FOUR_THREE">IMAGEN_3_LANDSCAPE_FOUR_THREE</option>
+          <option value="IMAGE_MODEL_NAME_UNSPECIFIED">Unspecified</option>
+        </select>
+      </label>
+      <label>Auth Token (optional):<input type="text" id="auth" placeholder="Enter your auth token..."></label>
+      <label>Save Directory:
+        <div class="directory-select">
+          <input type="text" id="saveDir" placeholder="Select directory to save images" readonly>
+          <button type="button" id="selectDir">Browse</button>
+        </div>
+      </label>
+      <button type="submit" id="generateBtn">Generate Images</button>
+    </form>
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div class="status">Generating images...</div>
+    </div>
+    <div id="output"></div>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html> 
