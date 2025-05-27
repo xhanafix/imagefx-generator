@@ -155,7 +155,6 @@ form.onsubmit = async (e) => {
   
   const prompt = document.getElementById('prompt').value;
   const count = parseInt(document.getElementById('count').value);
-  const ratio = document.getElementById('ratio').value;
   const model = document.getElementById('model').value;
   const auth = document.getElementById('auth').value;
   const saveDir = document.getElementById('saveDir').value;
@@ -167,7 +166,6 @@ form.onsubmit = async (e) => {
     const result = await ipcRenderer.invoke('generate-images', { 
       prompt, 
       count, 
-      ratio, 
       model, 
       auth,
       saveDir 

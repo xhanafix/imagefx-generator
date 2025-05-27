@@ -43,7 +43,7 @@ ipcMain.handle('select-directory', async () => {
 
 // Handle image generation
 ipcMain.handle('generate-images', async (event, args) => {
-  const { prompt, count, ratio, model, auth, saveDir } = args;
+  const { prompt, count, model, auth, saveDir } = args;
   const authToken = auth || fs.readFileSync('.auth', 'utf8').trim();
 
   // Create save directory if it doesn't exist
@@ -78,8 +78,7 @@ ipcMain.handle('generate-images', async (event, args) => {
       },
       modelInput: {
         modelNameType: model || "IMAGEN_3"
-      },
-      aspectRatio: ratio || "IMAGE_ASPECT_RATIO_SQUARE"
+      }
     };
 
     const req = https.request(options, (res) => {
@@ -96,9 +95,13 @@ ipcMain.handle('generate-images', async (event, args) => {
             reject(parsedData.error);
           } else {
             let msg = 'Success! Generated images:\n';
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            
             parsedData.imagePanels.forEach((panel, panelIndex) => {
               panel.generatedImages.forEach((image, imageIndex) => {
-                const imageName = `image-${panelIndex + 1}-${imageIndex + 1}.png`;
+                // Create unique filename with timestamp and random string
+                const uniqueId = Math.random().toString(36).substring(2, 8);
+                const imageName = `image-${timestamp}-${uniqueId}-${panelIndex + 1}-${imageIndex + 1}.png`;
                 const imagePath = saveDir ? path.join(saveDir, imageName) : imageName;
                 const imageData = image.encodedImage;
                 fs.writeFileSync(imagePath, imageData, 'base64');
