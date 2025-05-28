@@ -2,7 +2,7 @@ const { ipcRenderer } = require('electron');
 
 // Get DOM elements
 const form = document.getElementById('genForm');
-const generateBtn = document.getElementById('generateBtn');
+const generateBtn = document.getElementById('generate-button');
 const loading = document.getElementById('loading');
 const output = document.getElementById('output');
 const status = loading.querySelector('.status');
@@ -212,4 +212,25 @@ form.onsubmit = async (e) => {
   } finally {
     setLoading(false);
   }
-}; 
+};
+
+// Handle delete button click
+document.getElementById('delete-button').addEventListener('click', async (e) => {
+  e.preventDefault(); // Prevent form submission
+  updateStatus('Deleting images...', 'info');
+  try {
+    const result = await ipcRenderer.invoke('delete-all-images');
+    if (result.success) {
+      updateStatus(result.message, 'success');
+      // Clear image previews if deletion was successful and output directory existed
+      if (result.message !== 'Output directory does not exist.' && result.message !== 'Output directory is already empty.') {
+        const imagePreview = document.getElementById('imagePreview');
+        imagePreview.innerHTML = '';
+      }
+    } else {
+      updateStatus(result.message, 'error');
+    }
+  } catch (error) {
+    updateStatus(`Error deleting images: ${error.message}`, 'error');
+  }
+}); 

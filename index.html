@@ -229,10 +229,19 @@
       display: flex;
       gap: 10px;
       margin-top: 16px;
+      justify-content: space-between;
     }
 
     .button-group .secondary-button {
       flex: 1;
+    }
+
+    .delete-button {
+      background-color: var(--error);
+    }
+
+    .delete-button:hover {
+      background-color: #c0392b;
     }
 
     .preview-section {
@@ -516,7 +525,10 @@
           <label for="rememberDir">Remember last directory</label>
         </div>
       </label>
-      <button type="submit" id="generateBtn">Generate Images</button>
+      <div class="button-group">
+        <button id="generate-button">Generate Images</button>
+        <button type="button" id="delete-button" class="delete-button">Delete All Images</button>
+      </div>
     </form>
     <div class="loading" id="loading">
       <div class="spinner"></div>
