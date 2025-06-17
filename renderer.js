@@ -59,7 +59,6 @@ document.getElementById('generateRandomPrompt').addEventListener('click', () => 
   const subjectType = document.getElementById('subjectType');
   const location = document.getElementById('location');
   const lighting = document.getElementById('lighting');
-  const cameraType = document.getElementById('cameraType');
   const pose = document.getElementById('pose');
   const timePeriod = document.getElementById('timePeriod');
 
@@ -69,7 +68,6 @@ document.getElementById('generateRandomPrompt').addEventListener('click', () => 
   // Randomly select other options
   location.value = getRandomOption(location);
   lighting.value = getRandomOption(lighting);
-  cameraType.value = getRandomOption(cameraType);
   pose.value = getRandomOption(pose);
   timePeriod.value = getRandomOption(timePeriod);
 
@@ -83,7 +81,6 @@ document.getElementById('generateAmateurPrompt').addEventListener('click', () =>
   const subjectType = document.getElementById('subjectType').value;
   const location = document.getElementById('location').value;
   const lighting = document.getElementById('lighting').value;
-  const cameraType = document.getElementById('cameraType').value;
   const pose = document.getElementById('pose').value;
   const timePeriod = document.getElementById('timePeriod').value;
   const amateurLevel = document.getElementById('amateurLevel').value;
@@ -106,10 +103,6 @@ document.getElementById('generateAmateurPrompt').addEventListener('click', () =>
   
   if (lighting) {
     promptParts.push(`with ${lighting}`);
-  }
-  
-  if (cameraType) {
-    promptParts.push(`using ${cameraType}`);
   }
 
   if (pose && pose !== 'none') {
