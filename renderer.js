@@ -8,12 +8,28 @@ const output = document.getElementById('output');
 const status = loading.querySelector('.status');
 const rememberDirCheckbox = document.getElementById('rememberDir');
 const saveDirInput = document.getElementById('saveDir');
+const authInput = document.getElementById('auth');
 
-// Load saved directory on startup
+// Load saved directory and auth token on startup
 window.addEventListener('DOMContentLoaded', () => {
   const savedDir = localStorage.getItem('lastDirectory');
   if (savedDir) {
     saveDirInput.value = savedDir;
+  }
+  
+  const savedToken = localStorage.getItem('authToken');
+  if (savedToken) {
+    authInput.value = savedToken;
+  }
+});
+
+// Save auth token when it changes
+authInput.addEventListener('change', (e) => {
+  const token = e.target.value.trim();
+  if (token) {
+    localStorage.setItem('authToken', token);
+  } else {
+    localStorage.removeItem('authToken');
   }
 });
 
@@ -44,7 +60,7 @@ document.getElementById('generateRandomPrompt').addEventListener('click', () => 
   const location = document.getElementById('location');
   const lighting = document.getElementById('lighting');
   const cameraType = document.getElementById('cameraType');
-  const mistakes = document.getElementById('mistakes');
+  const pose = document.getElementById('pose');
   const timePeriod = document.getElementById('timePeriod');
 
   // Always randomly select subject type
@@ -54,7 +70,7 @@ document.getElementById('generateRandomPrompt').addEventListener('click', () => 
   location.value = getRandomOption(location);
   lighting.value = getRandomOption(lighting);
   cameraType.value = getRandomOption(cameraType);
-  mistakes.value = getRandomOption(mistakes);
+  pose.value = getRandomOption(pose);
   timePeriod.value = getRandomOption(timePeriod);
 
   // Trigger the amateur prompt generation
@@ -68,7 +84,7 @@ document.getElementById('generateAmateurPrompt').addEventListener('click', () =>
   const location = document.getElementById('location').value;
   const lighting = document.getElementById('lighting').value;
   const cameraType = document.getElementById('cameraType').value;
-  const mistakes = document.getElementById('mistakes').value;
+  const pose = document.getElementById('pose').value;
   const timePeriod = document.getElementById('timePeriod').value;
   const amateurLevel = document.getElementById('amateurLevel').value;
 
@@ -95,9 +111,9 @@ document.getElementById('generateAmateurPrompt').addEventListener('click', () =>
   if (cameraType) {
     promptParts.push(`using ${cameraType}`);
   }
-  
-  if (mistakes && mistakes !== 'none') {
-    promptParts.push(`showing ${mistakes}`);
+
+  if (pose && pose !== 'none') {
+    promptParts.push(`in ${pose} pose`);
   }
 
   if (timePeriod && timePeriod !== 'none') {
@@ -156,6 +172,7 @@ form.onsubmit = async (e) => {
   const prompt = document.getElementById('prompt').value;
   const count = parseInt(document.getElementById('count').value);
   const model = document.getElementById('model').value;
+  const aspectRatio = document.getElementById('aspectRatio').value;
   const auth = document.getElementById('auth').value;
   const saveDir = document.getElementById('saveDir').value;
 
@@ -166,7 +183,8 @@ form.onsubmit = async (e) => {
     const result = await ipcRenderer.invoke('generate-images', { 
       prompt, 
       count, 
-      model, 
+      model,
+      aspectRatio,
       auth,
       saveDir 
     });
@@ -183,8 +201,11 @@ form.onsubmit = async (e) => {
       .filter(line => line.trim().startsWith('Saved:'))
       .map(line => line.split('Saved:')[1].trim());
 
+    // Store the image paths for lightbox
+    generatedImages = imagePaths;
+
     // Create image previews
-    imagePaths.forEach(path => {
+    imagePaths.forEach((path, index) => {
       const previewDiv = document.createElement('div');
       previewDiv.className = 'image-preview';
 
@@ -195,7 +216,8 @@ form.onsubmit = async (e) => {
       const downloadBtn = document.createElement('button');
       downloadBtn.className = 'download-btn';
       downloadBtn.textContent = 'Download';
-      downloadBtn.onclick = () => {
+      downloadBtn.onclick = (e) => {
+        e.stopPropagation(); // Prevent lightbox from opening when clicking download
         const link = document.createElement('a');
         link.href = img.src;
         link.download = path.split('/').pop();
@@ -204,6 +226,12 @@ form.onsubmit = async (e) => {
 
       previewDiv.appendChild(img);
       previewDiv.appendChild(downloadBtn);
+
+      // Add click event to open lightbox
+      previewDiv.addEventListener('click', () => {
+        showLightbox(index);
+      });
+
       imagePreview.appendChild(previewDiv);
     });
   } catch (error) {
@@ -233,4 +261,123 @@ document.getElementById('delete-button').addEventListener('click', async (e) => 
   } catch (error) {
     updateStatus(`Error deleting images: ${error.message}`, 'error');
   }
-}); 
+});
+
+// Lightbox functionality
+let currentImageIndex = 0;
+const lightbox = document.getElementById('lightbox');
+const lightboxImage = document.getElementById('lightbox-image');
+const closeLightbox = document.querySelector('.close-lightbox');
+const prevButton = document.querySelector('.lightbox-nav.prev');
+const nextButton = document.querySelector('.lightbox-nav.next');
+let generatedImages = [];
+
+// Function to update the lightbox image
+function updateLightboxImage(index) {
+  if (generatedImages.length === 0) return;
+  
+  currentImageIndex = index;
+  lightboxImage.src = generatedImages[currentImageIndex];
+  
+  // Update navigation buttons
+  prevButton.style.display = currentImageIndex === 0 ? 'none' : 'block';
+  nextButton.style.display = currentImageIndex === generatedImages.length - 1 ? 'none' : 'block';
+}
+
+// Function to show lightbox
+function showLightbox(index) {
+  updateLightboxImage(index);
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden'; // Prevent scrolling when lightbox is open
+}
+
+// Function to hide lightbox
+function hideLightbox() {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = ''; // Restore scrolling
+}
+
+// Event listeners for lightbox
+closeLightbox.addEventListener('click', hideLightbox);
+prevButton.addEventListener('click', () => {
+  if (currentImageIndex > 0) {
+    updateLightboxImage(currentImageIndex - 1);
+  }
+});
+nextButton.addEventListener('click', () => {
+  if (currentImageIndex < generatedImages.length - 1) {
+    updateLightboxImage(currentImageIndex + 1);
+  }
+});
+
+// Close lightbox when clicking outside the image
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox) {
+    hideLightbox();
+  }
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (!lightbox.classList.contains('active')) return;
+  
+  switch (e.key) {
+    case 'Escape':
+      hideLightbox();
+      break;
+    case 'ArrowLeft':
+      if (currentImageIndex > 0) {
+        updateLightboxImage(currentImageIndex - 1);
+      }
+      break;
+    case 'ArrowRight':
+      if (currentImageIndex < generatedImages.length - 1) {
+        updateLightboxImage(currentImageIndex + 1);
+      }
+      break;
+  }
+});
+
+// Modify the image preview creation to include lightbox functionality
+function createImagePreview(imagePath) {
+  const preview = document.createElement('div');
+  preview.className = 'image-preview';
+  
+  const img = document.createElement('img');
+  img.src = imagePath;
+  img.alt = 'Generated image';
+  
+  const downloadBtn = document.createElement('button');
+  downloadBtn.className = 'download-btn';
+  downloadBtn.textContent = 'Download';
+  downloadBtn.onclick = (e) => {
+    e.stopPropagation(); // Prevent lightbox from opening when clicking download
+    // Your existing download logic here
+  };
+  
+  preview.appendChild(img);
+  preview.appendChild(downloadBtn);
+  
+  // Add click event to open lightbox
+  preview.addEventListener('click', () => {
+    const index = generatedImages.indexOf(imagePath);
+    if (index !== -1) {
+      showLightbox(index);
+    }
+  });
+  
+  return preview;
+}
+
+// Modify your existing image generation code to store the image paths
+// Add this where you handle the generated images:
+function handleGeneratedImages(images) {
+  generatedImages = images; // Store the array of image paths
+  const imagePreview = document.getElementById('imagePreview');
+  imagePreview.innerHTML = '';
+  
+  images.forEach(imagePath => {
+    const preview = createImagePreview(imagePath);
+    imagePreview.appendChild(preview);
+  });
+} 

@@ -129,6 +129,11 @@
       font-family: monospace;
       font-size: 14px;
       min-height: 100px;
+      user-select: text;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      cursor: text;
     }
 
     .loading {
@@ -298,6 +303,98 @@
     .image-preview .download-btn:hover {
       background-color: rgba(0, 0, 0, 0.9);
     }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox-content {
+      max-width: 90%;
+      max-height: 90vh;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
+    .close-lightbox {
+      position: fixed;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 1001;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      transition: background-color 0.3s;
+    }
+
+    .close-lightbox:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .lightbox-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 16px 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+      z-index: 1001;
+    }
+
+    .lightbox-nav:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .lightbox-nav.prev {
+      left: 20px;
+    }
+
+    .lightbox-nav.next {
+      right: 20px;
+    }
+
+    .image-preview {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .image-preview:hover {
+      transform: scale(1.02);
+    }
   </style>
 </head>
 <body>
@@ -425,29 +522,34 @@
         </div>
 
         <div class="control-group">
-          <label>Common Mistakes:
-            <select id="mistakes">
-              <option value="">Select mistake...</option>
+          <label>Pose:
+            <select id="pose">
+              <option value="">Select pose...</option>
               <option value="none">None</option>
-              <option value="blurry">Blurry</option>
-              <option value="finger in frame">Finger in Frame</option>
-              <option value="tilted horizon">Tilted Horizon</option>
-              <option value="red eye">Red Eye</option>
-              <option value="badly cropped">Badly Cropped</option>
-              <option value="motion blur">Motion Blur</option>
-              <option value="lens flare">Lens Flare</option>
-              <option value="photographer shadow">Photographer Shadow</option>
-              <option value="too close">Too Close</option>
-              <option value="too far away">Too Far Away</option>
-              <option value="closed eyes">Closed Eyes</option>
-              <option value="double exposure">Double Exposure</option>
-              <option value="light leak">Light Leak</option>
-              <option value="dust on lens">Dust on Lens</option>
-              <option value="wrong focus point">Wrong Focus Point</option>
-              <option value="flash reflections">Flash Reflections</option>
-              <option value="head cut off">Head Cut Off</option>
-              <option value="overprocessed">Overprocessed</option>
-              <option value="bad timing">Bad Timing</option>
+              <option value="casual standing">Casual Standing</option>
+              <option value="arms crossed">Arms Crossed</option>
+              <option value="hands in pockets">Hands in Pockets</option>
+              <option value="leaning against wall">Leaning Against Wall</option>
+              <option value="sitting on ground">Sitting on Ground</option>
+              <option value="sitting on chair">Sitting on Chair</option>
+              <option value="crossed legs">Crossed Legs</option>
+              <option value="peace sign">Peace Sign</option>
+              <option value="thumbs up">Thumbs Up</option>
+              <option value="waving">Waving</option>
+              <option value="pointing">Pointing</option>
+              <option value="hand on hip">Hand on Hip</option>
+              <option value="both hands on hips">Both Hands on Hips</option>
+              <option value="arms behind back">Arms Behind Back</option>
+              <option value="hands clasped">Hands Clasped</option>
+              <option value="leaning forward">Leaning Forward</option>
+              <option value="looking over shoulder">Looking Over Shoulder</option>
+              <option value="looking down">Looking Down</option>
+              <option value="looking up">Looking Up</option>
+              <option value="side profile">Side Profile</option>
+              <option value="candid moment">Candid Moment</option>
+              <option value="mid-action">Mid-Action</option>
+              <option value="mid-laugh">Mid-Laugh</option>
+              <option value="mid-conversation">Mid-Conversation</option>
             </select>
           </label>
         </div>
@@ -500,21 +602,33 @@
     <form id="genForm">
       <label>Prompt:<input type="text" id="prompt" required placeholder="Enter your prompt here..."></label>
       <label>Count:<input type="number" id="count" min="4" max="8" value="4"></label>
-      <label>Model:
-        <select id="model">
-          <option value="IMAGEN_3">IMAGEN_3</option>
-          <option value="IMAGEN_2">IMAGEN_2</option>
-          <option value="IMAGEN_3_1">IMAGEN_3_1</option>
-          <option value="IMAGEN_3_5">IMAGEN_3_5</option>
-          <option value="IMAGEN_2_LANDSCAPE">IMAGEN_2_LANDSCAPE</option>
-          <option value="IMAGEN_3_PORTRAIT">IMAGEN_3_PORTRAIT</option>
-          <option value="IMAGEN_3_LANDSCAPE">IMAGEN_3_LANDSCAPE</option>
-          <option value="IMAGEN_3_PORTRAIT_THREE_FOUR">IMAGEN_3_PORTRAIT_THREE_FOUR</option>
-          <option value="IMAGEN_3_LANDSCAPE_FOUR_THREE">IMAGEN_3_LANDSCAPE_FOUR_THREE</option>
-          <option value="IMAGE_MODEL_NAME_UNSPECIFIED">Unspecified</option>
-        </select>
-      </label>
-      <label>Auth Token (optional):<input type="text" id="auth" placeholder="Enter your auth token..."></label>
+      <label for="model">Model:</label>
+      <select id="model" name="model">
+        <option value="IMAGEN_4">Imagen 4</option>
+        <option value="IMAGEN_3_5">Imagen 3.5</option>
+        <option value="IMAGEN_3_1">Imagen 3.1</option>
+        <option value="IMAGEN_3">Imagen 3</option>
+        <option value="IMAGEN_2">Imagen 2</option>
+        <option value="IMAGEN_2_LANDSCAPE">Imagen 2 Landscape</option>
+        <option value="IMAGEN_3_PORTRAIT">Imagen 3 Portrait</option>
+        <option value="IMAGEN_3_LANDSCAPE">Imagen 3 Landscape</option>
+        <option value="IMAGEN_3_PORTRAIT_THREE_FOUR">Imagen 3 Portrait (3:4)</option>
+        <option value="IMAGEN_3_LANDSCAPE_FOUR_THREE">Imagen 3 Landscape (4:3)</option>
+        <option value="IMAGE_MODEL_NAME_UNSPECIFIED">Unspecified</option>
+      </select>
+
+      <label for="aspectRatio">Aspect Ratio:</label>
+      <select id="aspectRatio" name="aspectRatio">
+        <option value="SQUARE">Square (1:1)</option>
+        <option value="PORTRAIT">Portrait (9:16)</option>
+        <option value="LANDSCAPE">Landscape (16:9)</option>
+        <option value="PORTRAIT_THREE_FOUR">Portrait (3:4)</option>
+        <option value="LANDSCAPE_FOUR_THREE">Landscape (4:3)</option>
+        <option value="UNSPECIFIED">Unspecified</option>
+      </select>
+
+      <label for="auth">Auth Token:</label>
+      <input type="text" id="auth" placeholder="Enter your auth token...">
       <label>Save Directory:
         <div class="directory-select">
           <input type="text" id="saveDir" placeholder="Select directory to save images" readonly>
@@ -540,6 +654,17 @@
       <div id="imagePreview" class="image-grid"></div>
     </div>
   </div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox">
+    <span class="close-lightbox">&times;</span>
+    <button class="lightbox-nav prev">&#10094;</button>
+    <button class="lightbox-nav next">&#10095;</button>
+    <div class="lightbox-content">
+      <img id="lightbox-image" src="" alt="Lightbox image">
+    </div>
+  </div>
+
   <script src="renderer.js"></script>
 </body>
 </html> 
